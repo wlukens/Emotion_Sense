@@ -1,9 +1,11 @@
+
 package com.bitalino.bitalinodroid;
 
 import android.app.Activity;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothSocket;
+import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
@@ -32,6 +34,7 @@ public class MainActivity extends Activity {
     private static final UUID MY_UUID = UUID
             .fromString("00001101-0000-1000-8000-00805F9B34FB");
     private boolean testInitiated = false;
+    private boolean testComplete = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -40,6 +43,11 @@ public class MainActivity extends Activity {
 
         if (!testInitiated)
             new TestAsyncTask().execute();
+    }
+
+    private void startPicutre() {
+        Intent intent = new Intent(this, TakePictureActivity.class);
+        startActivity(intent);
     }
 
     @Override
@@ -60,7 +68,7 @@ public class MainActivity extends Activity {
         protected Void doInBackground(Void... paramses) {
             try {
                 // Let's get the remote Bluetooth device
-                final String remoteDevice = "20:13:08:08:15:83";
+                final String remoteDevice = "98:D3:31:B1:83:46";
 
                 final BluetoothAdapter btAdapter = BluetoothAdapter.getDefaultAdapter();
                 dev = btAdapter.getRemoteDevice(remoteDevice);
@@ -117,7 +125,7 @@ public class MainActivity extends Activity {
             } catch (Exception e) {
                 Log.e(TAG, "There was an error.", e);
             }
-
+            startPicutre();
             return null;
         }
 
