@@ -43,7 +43,6 @@ public class MainActivity extends Activity {
   private boolean testInitiated = false;
   public static final int MEDIA_TYPE_IMAGE = 1;
   public static final int MEDIA_TYPE_VIDEO = 2;
-
   private Uri fileUri;
 
   @Override

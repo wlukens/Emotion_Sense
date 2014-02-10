@@ -9,4 +9,10 @@
         android:layout_height="wrap_content"
         android:text="@string/button_takePic"
         android:onClick="takePicture" />
+    <TextView
+        android:id="@+id/log"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:text="@string/waiting"
+        android:editable="false" />
 </LinearLayout>
