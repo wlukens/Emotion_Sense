@@ -39,6 +39,8 @@ public class TakePictureActivity extends Activity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        Intent intent = getIntent();
+        BITalinoDevice bitalino = (BITalinoDevice)intent.getSerializableExtra("bitalino");
         setContentView(R.layout.activity_take_picture);
     }
 
@@ -82,7 +84,10 @@ public class TakePictureActivity extends Activity {
                 takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(photoFile));
                 startActivityForResult(takePictureIntent, REQUEST_IMAGE_CAPTURE);
             }
-            galleryAddPic();
+            // Take 20 s snapshot of arduino data store as an array with
+
+
+
         }
     }
 
@@ -99,8 +104,10 @@ public class TakePictureActivity extends Activity {
 
         // Save a file: path for use with ACTION_VIEW intents
         mCurrentPhotoPath = "file:" + image.getAbsolutePath();
-        Log.d(TAG, "Pic taken");
+
+        Log.d(TAG, "File Created");
         Log.d(TAG, mCurrentPhotoPath);
+
         return image;
     }
 
@@ -110,16 +117,18 @@ public class TakePictureActivity extends Activity {
         Uri contentUri = Uri.fromFile(f);
         mediaScanIntent.setData(contentUri);
         this.sendBroadcast(mediaScanIntent);
+        Log.d(TAG, "Scanner initiated");
     }
 
-//    @Override
-//    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
 //        if (requestCode == REQUEST_IMAGE_CAPTURE && resultCode == RESULT_OK) {
 //            Log.d(TAG, "Pic taken");
 //            Bundle extras = data.getExtras();
 //            Bitmap imageBitmap = (Bitmap) extras.get("data");
 //            mImageView.setImageBitmap(imageBitmap);
 //        }
-//    }
+        galleryAddPic();
+    }
 
 }

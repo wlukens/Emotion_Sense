@@ -1,6 +1,7 @@
 
 package com.bitalino.bitalinodroid;
 
+import com.google.gson.Gson;
 import android.app.Activity;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
@@ -17,6 +18,7 @@ import com.bitalino.BITalinoFrame;
 
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.util.HashSet;
 import java.util.UUID;
 
 public class MainActivity extends Activity {
@@ -45,8 +47,10 @@ public class MainActivity extends Activity {
             new TestAsyncTask().execute();
     }
 
-    private void startPicutre() {
+    private void startPicture(BITalinoDevice bitalino) {
         Intent intent = new Intent(this, TakePictureActivity.class);
+        //String bString = (new Gson()).Json(bitalino);
+        //intent.putExtra("Object String",bString);
         startActivity(intent);
     }
 
@@ -66,27 +70,21 @@ public class MainActivity extends Activity {
 
         @Override
         protected Void doInBackground(Void... paramses) {
+            btAddData();
+            return null;
+        }
+
+
+
+
+        protected Void btAddData(){
             try {
                 // Let's get the remote Bluetooth device
+                HashSet<String> frameSet = new HashSet<String>();
                 final String remoteDevice = "98:D3:31:B1:83:46";
 
                 final BluetoothAdapter btAdapter = BluetoothAdapter.getDefaultAdapter();
                 dev = btAdapter.getRemoteDevice(remoteDevice);
-
-    /*
-     * Establish Bluetooth connection
-     *
-     * Because discovery is a heavyweight procedure for the Bluetooth adapter,
-     * this method should always be called before attempting to connect to a
-     * remote device with connect(). Discovery is not managed by the Activity,
-     * but is run as a system service, so an application should always call
-     * cancel discovery even if it did not directly request a discovery, just to
-     * be sure. If Bluetooth state is not STATE_ON, this API will return false.
-     *
-     * see
-     * http://developer.android.com/reference/android/bluetooth/BluetoothAdapter
-     * .html#cancelDiscovery()
-     */
                 Log.d(TAG, "Stopping Bluetooth discovery.");
                 btAdapter.cancelDiscovery();
 
@@ -104,30 +102,36 @@ public class MainActivity extends Activity {
 
                 // start acquisition on predefined analog channels
                 bitalino.start();
-
+                startPicture(bitalino);
                 // read n samples
+
                 final int numberOfSamplesToRead = 10;
                 publishProgress("Reading " + numberOfSamplesToRead + " samples..");
                 BITalinoFrame[] frames = bitalino.read(numberOfSamplesToRead);
-                for (BITalinoFrame frame : frames)
-                    publishProgress(frame.toString());
+                for (BITalinoFrame frame : frames){
+                    String str = frame.toString();
+                   frameSet.add(str);
+                }
+
 
                 // trigger digital outputs
                 // int[] digital = { 1, 1, 1, 1 };
                 // device.trigger(digital);
 
                 // stop acquisition and close bluetooth connection
-                bitalino.stop();
-                publishProgress("BITalino is stopped");
+               bitalino.stop();
+               // publishProgress("BITalino is stopped");
 
                 sock.close();
-                publishProgress("And we're done! :-)");
+                //publishProgress("And we're done! :-)");
             } catch (Exception e) {
                 Log.e(TAG, "There was an error.", e);
             }
-            startPicutre();
             return null;
         }
+
+
+
 
         @Override
         protected void onProgressUpdate(String... values) {
