@@ -26,6 +26,11 @@ import android.widget.Toast;
 import java.util.Date;
 import java.text.SimpleDateFormat;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.Locale;
+
 public class MainActivity extends Activity {
 
     private static final String TAG = "MainActivity";
@@ -136,7 +141,10 @@ public class MainActivity extends Activity {
                 BITalinoFrame[] frames = bitalino.read(numberOfSamplesToRead);
                 int count =0;
                 for (BITalinoFrame frame : frames){
-                    String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
+                    long endTime=System.currentTimeMillis();
+                    Date date = new Date(endTime);
+                    DateFormat dForm =DateFormat.getDateInstance();
+                    String timeStamp=dForm.format(date);
                     String str = frame.toString();
                     count++;
                     Tag tag = new Tag(timeStamp, str, count);

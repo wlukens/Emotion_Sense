@@ -31,7 +31,7 @@ public class Tag implements Comparable{
      */
     @Override
     public String toString() {
-        return "com.bitalino.bitalinodroid.Tag [date=" + date + ", frame=" + frame + ", Number=" + pos + "]";
+        return "Tag [Number=" + pos + "     date=" + date + ", frame=" + frame + "]";
     }
 
 
