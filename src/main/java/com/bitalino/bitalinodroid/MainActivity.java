@@ -15,11 +15,16 @@ import android.widget.TextView;
 
 import com.bitalino.BITalinoDevice;
 import com.bitalino.BITalinoFrame;
+import java.util.*;
 
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.UUID;
+import android.widget.Toast;
+import java.util.Date;
+import java.text.SimpleDateFormat;
 
 public class MainActivity extends Activity {
 
@@ -47,12 +52,33 @@ public class MainActivity extends Activity {
             new TestAsyncTask().execute();
     }
 
-    private void startPicture(BITalinoDevice bitalino) {
-        Intent intent = new Intent(this, TakePictureActivity.class);
-        //String bString = (new Gson()).Json(bitalino);
-        //intent.putExtra("Object String",bString);
-        startActivity(intent);
+//    private void startPicture(BITalinoDevice bitalino) {
+//        Intent intent = new Intent(this, TakePictureActivity.class);
+//        //String bString = (new Gson()).Json(bitalino);
+//        //intent.putExtra("Object String",bString);
+//        startActivity(intent);
+//    }
+
+    private void sendEmail(ArrayList<Tag> set){
+        Intent i = new Intent(Intent.ACTION_SEND);
+        i.setType("message/rfc822");
+        i.putExtra(Intent.EXTRA_EMAIL  , new String[]{"ktzhou@stanford.edu"});
+        i.putExtra(Intent.EXTRA_SUBJECT, "Data Snap");
+        StringBuilder str = new StringBuilder();
+        Collections.sort(set);
+
+        for(Tag frame: set){
+            str.append(frame.toString());
+            str.append("\n");
+        }
+        i.putExtra(Intent.EXTRA_TEXT   , str.toString());
+        try {
+           startActivity(Intent.createChooser(i, "Send mail..."));
+        } catch (android.content.ActivityNotFoundException ex) {
+            Toast.makeText(MainActivity.this, "There are no email clients installed.", Toast.LENGTH_SHORT).show();
+        }
     }
+
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -80,7 +106,7 @@ public class MainActivity extends Activity {
         protected Void btAddData(){
             try {
                 // Let's get the remote Bluetooth device
-                HashSet<String> frameSet = new HashSet<String>();
+               ArrayList<Tag> frameSet = new ArrayList<Tag>();
                 final String remoteDevice = "98:D3:31:B1:83:46";
 
                 final BluetoothAdapter btAdapter = BluetoothAdapter.getDefaultAdapter();
@@ -102,22 +128,26 @@ public class MainActivity extends Activity {
 
                 // start acquisition on predefined analog channels
                 bitalino.start();
-                startPicture(bitalino);
+               // startPicture(bitalino);
                 // read n samples
 
-                final int numberOfSamplesToRead = 10;
+                final int numberOfSamplesToRead = 50;
                 publishProgress("Reading " + numberOfSamplesToRead + " samples..");
                 BITalinoFrame[] frames = bitalino.read(numberOfSamplesToRead);
+                int count =0;
                 for (BITalinoFrame frame : frames){
+                    String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
                     String str = frame.toString();
-                   frameSet.add(str);
+                    count++;
+                    Tag tag = new Tag(timeStamp, str, count);
+                    frameSet.add(tag);
                 }
 
 
                 // trigger digital outputs
                 // int[] digital = { 1, 1, 1, 1 };
                 // device.trigger(digital);
-
+               sendEmail(frameSet);
                 // stop acquisition and close bluetooth connection
                bitalino.stop();
                // publishProgress("BITalino is stopped");
