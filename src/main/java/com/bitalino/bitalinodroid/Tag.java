@@ -1,5 +1,8 @@
 package com.bitalino.bitalinodroid; /**
  * Created by andrewmb8 on 2/10/14.
+ Makes a tag which contains a data, frame, and position of the frame (order taken)
+
+
  */
 
 
