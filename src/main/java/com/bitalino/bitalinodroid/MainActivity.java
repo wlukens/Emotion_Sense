@@ -67,8 +67,8 @@ public class MainActivity extends Activity {
     private void sendEmail(ArrayList<Tag> set){
         Intent i = new Intent(Intent.ACTION_SEND);
         i.setType("message/rfc822");
-        i.putExtra(Intent.EXTRA_EMAIL  , new String[]{"ktzhou@stanford.edu"});
-        i.putExtra(Intent.EXTRA_SUBJECT, "Data Snap");
+        i.putExtra(Intent.EXTRA_EMAIL  , new String[]{"wlukens.stanford@gmail.com"});
+        i.putExtra(Intent.EXTRA_SUBJECT, "Emotion Sense");
         StringBuilder str = new StringBuilder();
         Collections.sort(set);
 
@@ -140,16 +140,23 @@ public class MainActivity extends Activity {
                 publishProgress("Reading " + numberOfSamplesToRead + " samples..");
                 BITalinoFrame[] frames = bitalino.read(numberOfSamplesToRead);
                 int count =0;
+                ArrayList<Integer> samples  = new ArrayList<Integer>();
                 for (BITalinoFrame frame : frames){
                     long endTime=System.currentTimeMillis();
                     Date date = new Date(endTime);
                     DateFormat dForm =DateFormat.getDateInstance();
                     String timeStamp=dForm.format(date);
-                    String str = frame.toString();
+                    String frameString = frame.toString();
+                    String[] sep1 = frameString.split("analog=");
+                    String[] sep2 = sep1[1].split(", 0, 0, 0, 0, 0");
+                    String str = sep2[0].substring(1);
+                    int reading = Integer.parseInt(str);
+                    samples.add(reading);
                     count++;
                     Tag tag = new Tag(timeStamp, str, count);
                     frameSet.add(tag);
                 }
+
 
 
                 // trigger digital outputs
