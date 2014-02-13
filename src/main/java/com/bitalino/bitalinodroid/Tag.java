@@ -9,12 +9,12 @@ package com.bitalino.bitalinodroid; /**
 public class Tag implements Comparable{
 
     public String date;
-    public String frame;
+    public double reading;
     public int pos;
 
-    public Tag(String date, String frame, int pos){
+    public Tag(String date, double reading, int pos){
         this.date = date;
-        this.frame= frame;
+        this.reading= reading;
         this.pos = pos;
     }
 
@@ -34,22 +34,22 @@ public class Tag implements Comparable{
      */
     @Override
     public String toString() {
-        return "Tag [Number=" + pos + "     date=" + date + ", frame=" + frame + "]";
+        return "Tag [Number=" + pos + "     date=" + date + ", reading=" + reading + "]";
     }
 
 
-    /* (non-Javadoc)
-     * @see java.lang.Object#hashCode()
-     */
-    @Override
-    public int hashCode() {
-        final int prime = 31;
-        int result = 1;
-        result = prime * result + ((date == null) ? 0 : date.hashCode());
-        result = prime * result + ((frame == null) ? 0 : frame.hashCode());
-        result = prime * result + pos;
-        return result;
-    }
+//    /* (non-Javadoc)
+//     * @see java.lang.Object#hashCode()
+//     */
+//    @Override
+//    public int hashCode() {
+//        final int prime = 31;
+//        int result = 1;
+//        result = prime * result + ((date == null) ? 0 : date.hashCode());
+//        result = prime * result + reading;
+//        result = prime * result + pos;
+//        return result;
+//    }
 
 
     /* (non-Javadoc)
@@ -69,15 +69,10 @@ public class Tag implements Comparable{
                 return false;
         } else if (!date.equals(other.date))
             return false;
-        if (frame == null) {
-            if (other.frame != null)
-                return false;
-        } else if (!frame.equals(other.frame))
+        if (reading != other.reading)
             return false;
         if (pos != other.pos)
             return false;
         return true;
     }
-
-
 }

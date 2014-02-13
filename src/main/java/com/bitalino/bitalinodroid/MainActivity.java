@@ -57,12 +57,12 @@ public class MainActivity extends Activity {
             new TestAsyncTask().execute();
     }
 
-//    private void startPicture(BITalinoDevice bitalino) {
-//        Intent intent = new Intent(this, TakePictureActivity.class);
-//        //String bString = (new Gson()).Json(bitalino);
-//        //intent.putExtra("Object String",bString);
-//        startActivity(intent);
-//    }
+    private void startPicture(BITalinoDevice bitalino) {
+        Intent intent = new Intent(this, TakePictureActivity.class);
+        String bString = (new Gson()).Json(bitalino);
+        intent.putExtra("Object String",bString);
+        startActivity(intent);
+    }
 
     private void sendEmail(ArrayList<Tag> set){
         Intent i = new Intent(Intent.ACTION_SEND);
@@ -111,7 +111,6 @@ public class MainActivity extends Activity {
         protected Void btAddData(){
             try {
                 // Let's get the remote Bluetooth device
-               ArrayList<Tag> frameSet = new ArrayList<Tag>();
                 final String remoteDevice = "98:D3:31:B1:83:46";
 
                 final BluetoothAdapter btAdapter = BluetoothAdapter.getDefaultAdapter();
@@ -133,38 +132,16 @@ public class MainActivity extends Activity {
 
                 // start acquisition on predefined analog channels
                 bitalino.start();
-               // startPicture(bitalino);
-                // read n samples
-
-                final int numberOfSamplesToRead = 50;
-                publishProgress("Reading " + numberOfSamplesToRead + " samples..");
-                BITalinoFrame[] frames = bitalino.read(numberOfSamplesToRead);
-                int count =0;
-                ArrayList<Integer> samples  = new ArrayList<Integer>();
-                for (BITalinoFrame frame : frames){
-                    long endTime=System.currentTimeMillis();
-                    Date date = new Date(endTime);
-                    DateFormat dForm =DateFormat.getDateInstance();
-                    String timeStamp=dForm.format(date);
-                    String frameString = frame.toString();
-                    String[] sep1 = frameString.split("analog=");
-                    String[] sep2 = sep1[1].split(", 0, 0, 0, 0, 0");
-                    String str = sep2[0].substring(1);
-                    int reading = Integer.parseInt(str);
-                    samples.add(reading);
-                    count++;
-                    Tag tag = new Tag(timeStamp, str, count);
-                    frameSet.add(tag);
-                }
+                startPicture(bitalino);
 
 
 
                 // trigger digital outputs
                 // int[] digital = { 1, 1, 1, 1 };
                 // device.trigger(digital);
-               sendEmail(frameSet);
+
                 // stop acquisition and close bluetooth connection
-               bitalino.stop();
+                bitalino.stop();
                // publishProgress("BITalino is stopped");
 
                 sock.close();

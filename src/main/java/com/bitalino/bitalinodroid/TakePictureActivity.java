@@ -25,6 +25,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.File;
+import java.text.DateFormat;
+import java.util.ArrayList;
 import java.util.UUID;
 import java.util.Date;
 import java.text.SimpleDateFormat;
@@ -122,6 +124,53 @@ public class TakePictureActivity extends Activity {
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        ArrayList<Tag> frameSet = new ArrayList<Tag>();
+        sendEmail(frameSet);
+        // read n samples
+        final int numberOfSamplesToRead = 50;
+        publishProgress("Reading " + numberOfSamplesToRead + " samples..");
+        BITalinoFrame[] frames = bitalino.read(numberOfSamplesToRead);
+        int count =0;
+        ArrayList<Integer> samples  = new ArrayList<Integer>();
+        for (BITalinoFrame frame : frames){
+            String frameString = frame.toString();
+            String[] sep1 = frameString.split("analog=");
+            String[] sep2 = sep1[1].split(", 0, 0, 0, 0, 0");
+            String str = sep2[0].substring(1);
+            int reading = Integer.parseInt(str);
+            samples.add(reading);
+            count++;
+        }
+        int sum = 0;
+        int avCount = 0;
+        double criteria = .30;
+        for(int read : samples) {
+            sum += read;
+        }
+        double firstAv = sum / samples.size();
+        double upper = firstAv * (1 + criteria);
+        double lower = firstAv * (1 - criteria);
+        sum = 0;
+        for(int read : samples) {
+            if(read < upper && read > lower) {
+                sum += read;
+                avCount++;
+            }
+        }
+        double average = sum / avCount;
+
+        long endTime=System.currentTimeMillis();
+        Date date = new Date(endTime);
+        DateFormat dForm =DateFormat.getDateInstance();
+        String timeStamp=dForm.format(date);
+        Tag tag = new Tag(timeStamp, average, count);
+        frameSet.add(tag);
+
+        sendEmail(frameSet);
+
+
+
+
 //        if (requestCode == REQUEST_IMAGE_CAPTURE && resultCode == RESULT_OK) {
 //            Log.d(TAG, "Pic taken");
 //            Bundle extras = data.getExtras();

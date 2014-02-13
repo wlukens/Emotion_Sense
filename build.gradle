@@ -29,4 +29,5 @@ dependencies {
     compile 'com.android.support:appcompat-v7:18.0.0'
     compile 'com.bitalino:bitalino-api:0.4.2'
     compile files('libs/gson-2.2.4.jar')
+    compile files('libs/json-lib-2.4-jdk15.jar')
 }
